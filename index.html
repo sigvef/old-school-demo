@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html><title>Old School Demo</title>
+<script src=Ball.js></script>
+<script src=InfiniteCanvas.js></script>
+<script src=Random.js></script>
+<canvas width=1600 height=900 id=c>
+<script>
+    (function(){
+        GU = 100;
+        t = 0;
+
+        Math.random = Random();
+
+        var ctx = c.getContext('2d');
+
+        var balls = new BallPool();
+
+        var infiniteCanvas = new InfiniteCanvas();
+
+        var leaderBall = new Ball();
+        leaderBall.x = 0;
+        leaderBall.y = 4.5;
+        leaderBall.direction = 0.5 * 3.141592;
+        leaderBall.thickness = 100;
+
+        for(var i=0;i<100;i++){
+            balls.addBall(leaderBall.x, leaderBall.y);
+        }
+
+        var scale = 1.5;
+
+        setInterval(function(){
+            t += 1;
+            scale *= 0.9995;
+            if(t % 100 == 0){
+                balls.addBall(leaderBall.x, leaderBall.y, leaderBall.direction);
+                balls.addBall(leaderBall.x, leaderBall.y, leaderBall.direction);
+                balls.addBall(leaderBall.x, leaderBall.y, leaderBall.direction);
+                balls.addBall(leaderBall.x, leaderBall.y, leaderBall.direction);
+                balls.addBall(leaderBall.x, leaderBall.y, leaderBall.direction);
+                balls.addBall(leaderBall.x, leaderBall.y, leaderBall.direction);
+            }
+            leaderBall.update();
+            leaderBall.directiondt *= 0.9;
+            leaderBall.render(infiniteCanvas);
+            balls.update();
+            balls.render(infiniteCanvas);
+            ctx.clearRect(0, 0, c.width, c.height);
+            infiniteCanvas.render(ctx, -(leaderBall.x - 8), -(leaderBall.y - 4.5), scale);
+        }, 10);
+             
+    })();
+</script>
+<style>
+    canvas {
+        border: 1px solid black;
+        margin: 0 auto;
+    }
+</style>
