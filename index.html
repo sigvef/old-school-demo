@@ -1,10 +1,76 @@
 <!DOCTYPE html>
 <html><title>Old School Demo</title>
+<script src=three.min.js.newest></script>
+<script src=OBJLoader.js></script>
 <script src=Ball.js></script>
 <script src=InfiniteCanvas.js></script>
 <script src=Random.js></script>
+<!--
 <canvas width=1600 height=900 id=c>
+-->
+<body></body>
 <script>
+
+    (function(){
+
+        var camera, scene, renderer;
+        var geometry, material, cube;
+        var dumpster;
+
+        function init() {
+            renderer = new THREE.WebGLRenderer({
+                antialias: true
+            });
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            document.body.appendChild(renderer.domElement);
+
+            camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 1, 1000);
+            camera.position.z = 500;
+
+            scene = new THREE.Scene();
+
+            geometry = new THREE.CubeGeometry(100, 100, 100);
+            material = new THREE.MeshLambertMaterial({
+                color: 0xff0000
+            });
+
+            cube = new THREE.Mesh(geometry, material);
+            scene.add(cube);
+
+            var light = new THREE.PointLight(0xffffff);
+            light.position = new THREE.Vector3(0,100,400);
+            scene.add(light);
+            var ambient = new THREE.AmbientLight(0x111111);
+            scene.add(ambient);
+
+            var loader = new THREE.JSONLoader();
+            loader.load("res/dumpster_scene.js",
+                    function(geometry, materials) {
+                console.log('loaded', geometry, materials);
+                var mesh = new THREE.Mesh(geometry,
+                    new THREE.MeshFaceMaterial(materials));
+                scene.add(mesh);
+            });
+        }
+
+        function animate() {
+            requestAnimationFrame(animate);
+
+            t = Date.now()/1000;
+
+            camera.position.z = Math.sin(t)*500;
+            camera.position.x = Math.cos(t)*500;
+            camera.position.y = 400;
+
+            camera.lookAt(cube.position);
+
+            renderer.render(scene, camera);
+        }
+
+        init();
+        animate();
+    })();
+    /*
     (function(){
         GU = 100;
         t = 0;
@@ -48,12 +114,13 @@
             ctx.clearRect(0, 0, c.width, c.height);
             infiniteCanvas.render(ctx, -(leaderBall.x - 8), -(leaderBall.y - 4.5), scale);
         }, 10);
-             
+
     })();
+    */
 </script>
 <style>
-    canvas {
-        border: 1px solid black;
+    *{
         margin: 0 auto;
+        padding: 0 auto;
     }
 </style>
