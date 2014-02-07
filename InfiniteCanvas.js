@@ -24,7 +24,6 @@ InfiniteCanvas.prototype.drawImage = function(image, x, y, scale){
         var draw_x = GU * (x - (x_canvas + 1) * 16);
         var draw_y = GU * (y - y_canvas * 9);
         ctx.save();
-        console.log(draw_x, draw_y);
         ctx.translate(draw_x, draw_y);
         ctx.scale(scale, scale);
         ctx.drawImage(image, image.width / 2, image.height / 2);
