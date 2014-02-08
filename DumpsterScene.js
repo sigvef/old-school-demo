@@ -10,9 +10,21 @@ DumpsterScene.prototype.init = function(done){
     var geometry, material, cube;
     var dumpster;
 
+
     this.scene = new THREE.Scene();
 
     this.camera = new THREE.ScriptedCamera(this.script, this.scene);
+    renderer.autoClear = false;
+
+    this.composer = new THREE.EffectComposer(renderer);
+    this.bloomEffect = new THREE.BloomPass(2, 16, 16);
+    this.noiseEffect = new THREE.ShaderPass(THREE.NoiseShader);
+    this.copyPass = new THREE.ShaderPass(THREE.CopyShader);
+    this.copyPass.renderToScreen = true;
+    this.composer.addPass(new THREE.RenderPass(this.scene, this.camera));
+    this.composer.addPass(this.noiseEffect);
+    this.composer.addPass(this.bloomEffect);
+    this.composer.addPass(this.copyPass);
 
     geometry = new THREE.CubeGeometry(100, 100, 100);
     material = new THREE.MeshLambertMaterial({
@@ -26,11 +38,12 @@ DumpsterScene.prototype.init = function(done){
     light.position = new THREE.Vector3(500,1000,400);
     this.scene.add(light);
     var spotLight = new THREE.SpotLight(0xffffff);
-    spotLight.position.set(500,500,500);
+    spotLight.position.set(1000,1000,1000);
     spotLight.lookAt(cube.position);
+    this.cameraLight = new THREE.DirectionalLight(0xffffff);
+    this.scene.add(this.cameraLight);
     this.scene.add(spotLight);
     var ambient = new THREE.AmbientLight(0x444444);
-    this.scene.add(ambient);
 
     var urlPrefix = "res/skybox/";
     var map = [
@@ -100,15 +113,37 @@ DumpsterScene.prototype.update = function(){
         this.camera.update(t);
     }
 
+
+    this.cameraLight.position.x = this.camera.position.x;
+    this.cameraLight.position.y = this.camera.position.y;
+    this.cameraLight.position.z = this.camera.position.z;
+    this.cameraLight.lookAt(this.camera.target);
+
     if(t >= 1228) {
-       var amount = (t - 1228) / (1488 - 1288);
+       var amount = (t - 1228) / (1588 - 1288);
        this.camera.up.x = lerp(0, 0.70999757454156, amount);
        this.camera.up.y = lerp(1, 0.66357575026628, amount);
        this.camera.up.z = lerp(0, -0.235734316135022, amount);
     }
+
+    this.noiseEffect.uniforms.width.value = (16*GU)/2;
+    this.noiseEffect.uniforms.time.value =  Math.sin(t / 200) * 200;
+    this.noiseEffect.uniforms.height.value = (9*GU)/2;
+    this.noiseEffect.uniforms.amount.value = 0.03;
+    if(t < 10){
+        this.camera.position.x = 500;
+        this.camera.position.y = 500;
+        this.camera.position.z = 500;
+        this.camera.lookAt(new THREE.Vector3(0,0,0));
+    }
 }
 
 DumpsterScene.prototype.render = function() {
+    renderer.clear();
+    if(t < 1000){
+        renderer.domElement.style.opacity = t / 1000;
+    }
+    this.composer.render();
     renderer.render(this.scene, this.camera);
 }
 

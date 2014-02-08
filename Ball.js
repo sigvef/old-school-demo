@@ -5,8 +5,8 @@ function Ball(){
     this.y = 0;
     this.direction = 0;
     this.directiondt = 0;
-    this.thickness = 1;
-    this.speed = 0.02;
+    this.thickness = 10;
+    this.speed = 0.015;
 }
 
 Ball.prototype.update = function(){
@@ -61,7 +61,7 @@ BallPool.prototype.addBall = function(x, y, direction){
     } else {
         var ball = this.balls[this.n++];
     }
-    ball.thickness = 0.5 * Math.random() + 0.5;
+    ball.thickness = (0.5 * Math.random() + 0.5);
     ball.x = x;
     ball.y = y;
     ball.direction = direction || Math.random() * 2 * 3.141592;
@@ -81,7 +81,8 @@ BallPool.prototype.copy = function(from, to){
 
 BallPool.prototype.update = function(){
     for(var i=0;i<this.n;i++){
-        if(this.balls[i].update()){
+        var ball = this.balls[i];
+        if(ball.update()){
             this.pop(i--);
         }
     }

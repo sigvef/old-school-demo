@@ -1,4 +1,4 @@
-<aDOCTYPE html>
+<!DOCTYPE html>
 <html><title>Old School Demo</title>
 <script src=three.js></script>
 <script src=FlyControls.js></script>
@@ -6,6 +6,15 @@
 <script src=Ball.js></script>
 <script src=InfiniteCanvas.js></script>
 <script src=Random.js></script>
+<script src=PlasmaShader.js></script>
+<script src=EffectComposer.js></script>
+<script src=CopyShader.js></script>
+<script src=BloomPass.js></script>
+<script src=RenderPass.js></script>
+<script src=ShaderPass.js></script>
+<script src=ConvolutionShader.js></script>
+<script src=NoiseShader.js></script>
+<script src=ShaderExtras.js></script>
 <script src=ScreenScene.js></script>
 <script src=bootstrap.js></script>
 <script src=DumpsterScene.js></script>
@@ -19,6 +28,20 @@
     *{
         margin: 0 auto;
         padding: 0 auto;
+        color: white;
+        font-family: cool;
+    }
+    html, body{
+        background: black;
+    }
+    canvas {
+        background: white;
+    }
+    @font-face {
+        font-family: 'cool';
+        src: url('res/font.ttf') format('truetype');
+        font-weight: normal;
+        font-style: normal;
     }
 </style>
 </body>

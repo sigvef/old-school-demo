@@ -6,13 +6,13 @@ THREE.ScriptedCamera = function(script, scene) {
     var camera = new THREE.PerspectiveCamera(75, 16 / 9, 1, 30000);
 
     camera.update = function(){
-        var position = cameraPath.getPoint(t / 1475);
+        var position = cameraPath.getPoint(t / 1490);
         camera.position.x = position.x;
         camera.position.y = position.y;
         camera.position.z = position.z;
 
-        var target = targetPath.getPoint(t / 1475);
-        camera.lookAt(target);
+        camera.target = targetPath.getPoint(t / 1490);
+        camera.lookAt(camera.target);
     }
     return camera;
 }
