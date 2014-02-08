@@ -47,6 +47,7 @@ ShoutScene.prototype.render = function(){
 }
 
 ShoutScene.prototype.reset = function(){
+    this.canvas.style.margin = renderer.domElement.style.margin;
     document.body.appendChild(this.canvas);
 }
 ShoutScene.prototype.pause = function(){

@@ -8,6 +8,21 @@ PartyScene.prototype.init = function(done){
 
     PartyScene.random = new Random();
 
+    var loader = new THREE.JSONLoader();
+    var that = this;
+    loader.load("res/dumpster_scene.js",
+            function(geometry, materials) {
+                var dumpsterMaterial = materials[0];
+                dumpsterMaterial.normalMap = THREE.ImageUtils.loadTexture("res/Tex_0040_2.jpg"); 
+                dumpsterMaterial.bumpScale = 19;
+                dumpsterMaterial.shinyness = 25;
+                dumpsterMaterial.normalMap.wrapS = dumpsterMaterial.normalMap.wrapT = THREE.RepeatWrapping;
+                var mesh = new THREE.Mesh(geometry,
+                    new THREE.MeshFaceMaterial(materials));
+                mesh.castShadow = true;
+                that.dumpsterMesh = mesh;
+            });
+
     var light = new THREE.PointLight(0xffffff);
     light.position = new THREE.Vector3(500,1000,400);
     this.scene.add(light);
@@ -23,6 +38,43 @@ PartyScene.prototype.init = function(done){
     this.camera.position.y = 1000;
     this.camera.position.z = 1000;
     this.camera.lookTarget = new THREE.Vector3(0,0,0);
+
+    var particleGeometry = new THREE.Geometry();
+
+    for ( i = 0; i < 20000; i ++ ) {
+        var vertex = new THREE.Vector3();
+        vertex.x = DumpsterScene.random() * 2000 - 1000;
+        vertex.y = DumpsterScene.random() * 3000;
+        vertex.z = DumpsterScene.random() * 2000 - 1000;
+        particleGeometry.vertices.push( vertex );
+    }
+
+    var particleParameters = [
+        [[1, 1, 0.5], 1],
+        [[0.95, 1, 0.5], 1.2],
+        [[0.90, 1, 0.5], 1.4],
+        [[0.85, 1, 0.5], 1.6],
+        [[0.80, 1, 0.5], 1.8]
+    ];
+
+    var particleMaterials = [];
+    this.particleSystems = [];
+
+    for ( i = 0; i < particleParameters.length; i ++ ) {
+        var color = particleParameters[i][0];
+        var size  = particleParameters[i][1];
+        particleMaterials[i] = new THREE.ParticleSystemMaterial({
+            size: size,
+            fog: true,
+            opacity: 0.5,
+            transparency: true
+        });
+        this.particleSystems[i] = new THREE.ParticleSystem(particleGeometry, particleMaterials[i]);
+        this.particleSystems[i].rotation.x = DumpsterScene.random() * 6;
+        this.particleSystems[i].rotation.y = DumpsterScene.random() * 6;
+        this.particleSystems[i].rotation.z = DumpsterScene.random() * 6;
+        this.scene.add(this.particleSystems[i]);
+    }
 
     this.composer = new THREE.EffectComposer(renderer);
     this.bloomEffect = new THREE.BloomPass(3, 25, 16);
@@ -133,6 +185,15 @@ PartyScene.prototype.init = function(done){
 }
 
 PartyScene.prototype.update = function(){
+    for ( i = 0; i < this.particleSystems.length; i ++ ) {
+        var ps = this.particleSystems[i];
+        ps.position.x = Math.sin(t/100) * 10;
+        ps.position.y = - t; 
+        ps.position.z = Math.cos(t/100) * 10;
+        ps.rotation.x = t / 8000; 
+        ps.rotation.y = t / 3402; 
+        ps.rotation.z = t / 4539; 
+    }
     this.plasmaCube.rotation.x = t / 201 * 4;
     this.plasmaCube.rotation.y = t / 101 * 4;
     this.plasmaCube.position.x = Math.sin(t / 21) * 1000;
@@ -148,7 +209,7 @@ PartyScene.prototype.update = function(){
     }
     this.polyhedronMaterial.opacity = (1 + Math.sin(2 * t / 50 / 120 * 145 * Math.PI * 2)) / 2;
 
-    if(Math.sin(2 * t / 50 / 120 * 145 * Math.PI) > 0.99){
+    if(Math.sin(2 * t / 50 / 120 * 145 * Math.PI) > 0.99 && t < 6702){
         this.camera.position.x = 100 + Math.sin(PartyScene.random() * Math.PI * 2) * 500;
         this.camera.position.y = 200 + (1000 + Math.sin(PartyScene.random() * Math.PI * 2) * 1000) / 10;
         this.camera.position.z = 100 + Math.sin(PartyScene.random() * Math.PI * 2) * 500;
@@ -159,14 +220,26 @@ PartyScene.prototype.update = function(){
             this.plasmaCube.position :
             new THREE.Vector3(PartyScene.random() * 1000, PartyScene.random() * 500 + 100, PartyScene.random() * 1000);
     }
-    this.camera.position.x += this.camera.directionX;
-    this.camera.position.y += this.camera.directionY;
-    this.camera.position.z += this.camera.directionZ;
-    this.camera.lookAt(this.camera.lookTarget);
+    if(t < 6702){
+        this.camera.position.x += this.camera.directionX;
+        this.camera.position.y += this.camera.directionY;
+        this.camera.position.z += this.camera.directionZ;
+        this.camera.lookAt(this.camera.lookTarget);
+    }
     this.noiseEffect.uniforms.width.value = (16*GU)/2;
     this.noiseEffect.uniforms.time.value =  Math.sin(t / 200) * 200;
     this.noiseEffect.uniforms.height.value = (9*GU)/2;
     this.noiseEffect.uniforms.amount.value = 0.03;
+    
+    if(t == 6702){
+        renderer.domElement.style.display = 'none';
+        var p = document.createElement('p');
+        document.body.appendChild(p);
+        p.innerHTML = '"Old computers never die!"<br><br><br>by sigveseb';
+        p.style.font = '40pt cool';
+        p.style.textAlign = 'center';
+        p.style.marginTop = '300px';
+    }
 }
 
 PartyScene.prototype.render = function(){

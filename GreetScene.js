@@ -72,6 +72,8 @@ GreetScene.prototype.render = function(){
 GreetScene.prototype.reset = function(){
     renderer.domElement.style.display = 'none';
     this.infiniteCanvas.drawImage(this.greetzImage, -10, 9);
+
+    this.canvas.style.margin = renderer.domElement.style.margin;
     document.body.appendChild(this.canvas);
     GreetScene.random = Random(172344);
 }

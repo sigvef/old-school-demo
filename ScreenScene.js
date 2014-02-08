@@ -5,6 +5,20 @@ ScreenScene.prototype.startTime = 1482;
 
 ScreenScene.prototype.init = function(done){
 
+    this.boom = 0;
+
+    this.tunnel = new THREE.Mesh(
+        new THREE.TorusGeometry(100, 10, 100, 100),
+        new THREE.MeshBasicMaterial({
+            wireframe: true,
+            color: 0x00ff00
+        })
+    );
+
+    this.tunnel.position.z = 500;
+    this.tunnel.position.y = -100;
+    this.tunnel.rotation.y = 0.5 * Math.PI;
+
     this.scene = new THREE.Scene();
     this.camera = new THREE.PerspectiveCamera(50, 16 / 9, 1, 30000);
     this.camera.position.z = 500;
@@ -20,6 +34,12 @@ ScreenScene.prototype.init = function(done){
         transparent: true,
         color: 0x00ff00
     });
+
+    this.canvas = document.createElement('canvas');
+    this.canvas.classList.add('fix');
+    this.canvas.width = 16 * GU;
+    this.canvas.height = 9 * GU;
+    this.ctx = this.canvas.getContext('2d');
 
     this.piano = [];
     
@@ -138,6 +158,10 @@ ScreenScene.prototype.init = function(done){
         new THREE.CubeGeometry(200, 200,200),
         createPlasmaShaderMaterial(this.plasmaUniforms)
     );
+    this.plasmaCube2 = new THREE.Mesh(
+        new THREE.CubeGeometry(200, 200,200),
+        createPlasmaShaderMaterial(this.plasmaUniforms)
+    );
     for(var i=0;i<6;i++){
         this.polyhedronWires[i] = new THREE.Mesh(geometry,
                 this.polyheldronWireMaterial);
@@ -190,6 +214,13 @@ ScreenScene.prototype.init = function(done){
 }
 
 ScreenScene.prototype.update = function(){
+
+    ScreenScene.prototype.startTime = 1482;
+    if(t <= 1500){
+        var amount = 1 - (t - 1482) / ( 1500 - 1482);
+        this.canvas.style.opacity = amount;
+    }
+
     this.noiseEffect.uniforms.width.value = (16*GU)/2;
     this.noiseEffect.uniforms.time.value =  Math.sin(t / 200) * 200;
     this.noiseEffect.uniforms.height.value = (9*GU)/2;
@@ -203,6 +234,18 @@ ScreenScene.prototype.update = function(){
     this.polyhedronMaterial.opacity = (1 + Math.sin(2 * t / 50 / 120 * 145 * Math.PI * 2)) / 2;
 
     this.textX -= t < 2490 ? 5 : 10;
+
+    var beat = (1 + Math.sin(2 * t / 50 / 120 * 145 * Math.PI * 2)) / 2;
+    if(beat > 0.99){
+        this.boom = 1;
+    }
+    var c = 3 + 20 * this.boom;
+    if(this.boom >= 0){
+        this.boom -= 0.1;
+    }
+    if(t >= 2140){
+        renderer.setClearColor(c << 16 | c << 8 | c);
+    }
 
 
     /* piano keyboarding */
@@ -294,6 +337,8 @@ ScreenScene.prototype.update = function(){
         }
         this.scene.remove(this.scroller);
         this.scene.add(this.plasmaCube);
+        this.scene.add(this.plasmaCube2);
+        this.plasmaCube2.position.x = 100000;
     }
 
     for(var i=0;i<16;i++){
@@ -307,22 +352,50 @@ ScreenScene.prototype.update = function(){
     if(t >= 2465){
         this.scroller.rotation.x = -0.15;
     }
-    if(t == 2480) {
+    if(t == 2480){
     }
     if(t == 2807){
         this.scene.remove(this.plasmaCube);
+        this.scene.remove(this.plasmaCube2);
         for(var i=0;i<16;i++){
             this.scene.add(this.piano[i]);
         }
     }
+    if(t == 3470) {
+        this.scene.add(this.tunnel);
+    }
+    if(t >= 3470) {
+        for(var i=0;i<16;i++){
+            this.piano[i].position.y -= 10;
+            this.piano[i].position.z -= 5;
+        }
+        var amount = (t - 3470) / (3800 - 3740);
+        this.tunnel.material.opacity = lerp(0, 1, amount);
+    }
 
-    this.plasmaCube.rotation.x = t / 201 * 4;
-    this.plasmaCube.rotation.y = t / 101 * 4;
-    this.plasmaCube.position.y = 100;
-    this.plasmaCube.position.z = -200;
-    this.plasmaCube.position.x = Math.sin(t / 50 / 120 * 145 * Math.PI) * 200;
+    if(t >= 2480){
+        var amount = Math.min(1, (t - 2480) / (2510 - 2480));
+        this.plasmaCube2.rotation.x = t / 201 * 4;
+        this.plasmaCube2.rotation.y = t / 101 * 4;
+        this.plasmaCube2.position.y = 100;
+        this.plasmaCube2.position.z = -200;
+        this.plasmaCube2.position.x = lerp(0, -180, amount) + Math.sin(t / 50 / 120 * 145 * Math.PI) * 200;
+        this.plasmaCube.rotation.x = t / 201 * 4;
+        this.plasmaCube.rotation.y = t / 101 * 4;
+        this.plasmaCube.position.y = 100;
+        this.plasmaCube.position.z = -200;
+        this.plasmaCube.position.x = lerp(0, 180, amount) + Math.sin(t / 50 / 120 * 145 * Math.PI) * 200;
+    } else {
+        this.plasmaCube.rotation.x = t / 201 * 4;
+        this.plasmaCube.rotation.y = t / 101 * 4;
+        this.plasmaCube.position.y = 100;
+        this.plasmaCube.position.z = -200;
+        this.plasmaCube.position.x = Math.sin(t / 50 / 120 * 145 * Math.PI) * 200;
+    }
     this.plasmaUniforms.time.value = t / 10;
     this.plasmaUniforms.scale.value = (2 + Math.sin(t / 17)) * 5;
+    this.tunnel.rotation.z = Math.sin(t / 100) * 2;
+    this.tunnel.rotation.y = Math.cos(t / 100) * 2;
 };
 
 ScreenScene.prototype.render = function(){
@@ -350,5 +423,12 @@ ScreenScene.prototype.render = function(){
     renderer.render(this.scene, this.camera);
 };
 ScreenScene.prototype.reset = function(){
+    this.canvas.style.margin = renderer.domElement.style.margin;
+    this.ctx.fillStyle = 'white';
+    this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
+    document.body.appendChild(this.canvas);
     renderer.setClearColor(0x030303, 1);
 };
+ScreenScene.prototype.pause = function(){
+    document.body.removeChild(this.canvas);
+}
