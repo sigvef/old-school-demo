@@ -1,51 +1,39 @@
+THREE.LensShader = {
 
-THREE.NoiseShader= {
-
-  uniforms: {
-		tDiffuse: { type: "t", value: 0, texture: null },
-        amount:   { type: "f", value: 0.1 },
-	    time:     { type: "f", value: 0 },
-	    width:    { type: "f", value: 900},
-	    height:   { type: "f", value: 900}
+	uniforms: {
+		"tDiffuse":        { type: "t", value: null }
 	},
 
 	vertexShader: [
 		"varying vec2 vUv;",
 
 		"void main() {",
-			"vUv = vec2(uv.x, uv.y);",
-
+			"vUv = uv;",
 			"gl_Position = projectionMatrix * modelViewMatrix * vec4( position, 1.0 );",
-
 		"}"
-
 	].join("\n"),
 
 	fragmentShader: [
+        "varying mediump vec2 vUv;",
+        "uniform sampler2D tDiffuse;",
 
-		"uniform float time;",
-		"uniform float amount;",
-		"uniform sampler2D tDiffuse;",
-		"uniform float width;",
-		"uniform float height;",
-		"varying vec2 vUv;",
-
-		"float ranieyy(vec2 co) {",
-			"return fract(sin(dot(co.xy, vec2(12.9898,78.233))) * 43758.5453);",
-		"}",
-
-		"void main() {",
-		
-			"vec4 colorInput = texture2D( tDiffuse, vUv );",
-
-			"vec2 pozz = vec2(floor(width*vUv.x)/width, floor(height*vUv.y)/height);",
-
-			"vec3 color = vec3(.1, 0.1, 0.1) + vec3(ranieyy(vec2(pozz+time/1009.0)));",
-
-			"gl_FragColor = colorInput*(1.0-amount)+amount*vec4(color, 0.1);",
-
-		"}"
-
+        "void main() {",
+            "vec2 center = vec2(0.5, 0.5);",
+            "float radius = 4.;",
+            "float scale = -0.25;",
+            "vec2 textureCoordinateToUse = vUv;",
+            "float dist = distance(center, vUv);",
+            "textureCoordinateToUse -= center;",
+            "if (dist < radius) {",
+                "highp float percent = 1.0 + ((0.5 - dist) / 0.5) * scale;",
+                "textureCoordinateToUse = textureCoordinateToUse * percent;",
+                "textureCoordinateToUse += center;",
+                "vec4 color = texture2D(tDiffuse, textureCoordinateToUse );",
+                "if (percent > 1.) {",
+                    "color = (1. - (percent - 1.) * 15.) * color;",
+                "}",
+                "gl_FragColor = color;",
+            "}",
+        "}"
 	].join("\n")
-
 };

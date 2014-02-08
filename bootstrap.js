@@ -55,6 +55,7 @@ function start(){
     sm.addScene(new ScreenScene());
     sm.addScene(new DumpsterScene());
     sm.addScene(new GreetScene());
+    sm.addScene(new ShoutScene());
     sm.initScenes(function(){
         sm.warmup();
         readytostart();

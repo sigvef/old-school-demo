@@ -27,6 +27,7 @@ SceneManager.prototype.initScenes = function(cb){
 };
 
 SceneManager.prototype.jumpToScene = function(key, dontResetMusic){
+    this.activeScene && this.activeScene.pause && this.activeScene.pause();
     this.activeKey = key;
     this.activeScene = this.scenes[key];
     this.activeScene.reset();

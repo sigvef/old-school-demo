@@ -112,11 +112,15 @@ ScreenScene.prototype.init = function(done){
     this.composer = new THREE.EffectComposer(renderer);
     this.bloomEffect = new THREE.BloomPass(0.75, 16);
     this.noiseEffect = new THREE.ShaderPass(THREE.NoiseShader);
+    this.fisheyeEffect = new THREE.ShaderPass(THREE.LensShader);
+    this.scanlineEffect = new THREE.ShaderPass(THREE.ScanlineShader);
     this.copyPass = new THREE.ShaderPass(THREE.CopyShader);
     this.copyPass.renderToScreen = true;
     this.composer.addPass(new THREE.RenderPass(this.scene, this.camera));
+    this.composer.addPass(this.scanlineEffect);
     this.composer.addPass(this.noiseEffect);
     this.composer.addPass(this.bloomEffect);
+    this.composer.addPass(this.fisheyeEffect);
     this.composer.addPass(this.copyPass);
 
     this.plasmaUniforms = {

@@ -1,7 +1,7 @@
 function GreetScene(){ }
 
 GreetScene.prototype.NAME = 'greet';
-GreetScene.prototype.startTime = 4136;
+GreetScene.prototype.startTime = 4126;
 
 GreetScene.prototype.init = function(done){
     this.greetzImage = document.createElement('img');
@@ -45,7 +45,15 @@ GreetScene.prototype.syncrender = function(){
     this.leaderBall.render(this.infiniteCanvas);
     this.balls.render(this.infiniteCanvas);
     this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
-    this.infiniteCanvas.render(this.ctx, -(this.leaderBall.x - 8), -(this.leaderBall.y - 4.5), this.scale);
+    var x = -(this.leaderBall.x - 6);
+    var y = -(this.leaderBall.y - 4.5);
+    this.canvas.style.backgroundPosition = (x * GU / 2) + 'px ' + (y * GU / 2) + 'px';
+    this.infiniteCanvas.render(this.ctx, x, y, this.scale);
+    if(t > 5129){
+        var amount = (t - 5129) / (5369 - 5129);
+        this.ctx.fillStyle = 'rgba(255, 255, 255,' + amount + ')';
+        this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
+    }
 }
 
 GreetScene.prototype.render = function(){
@@ -53,11 +61,12 @@ GreetScene.prototype.render = function(){
 
 GreetScene.prototype.reset = function(){
     renderer.domElement.style.display = 'none';
-    this.infiniteCanvas.drawImage(this.greetzImage, -4, 0);
+    this.infiniteCanvas.drawImage(this.greetzImage, -10, 9);
     document.body.appendChild(this.canvas);
-    Math.random = Random(12);
+    Math.random = Random(172344);
 }
 GreetScene.prototype.pause = function(){
+    document.body.removeChild(this.canvas);
 }
 GreetScene.prototype.resume = function(){
 }

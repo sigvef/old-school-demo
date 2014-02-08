@@ -37,8 +37,7 @@ Ball.prototype.sprite = (function(){
     canvas.width = GU * 0.2;
     canvas.height = GU * 0.2;
     var ctx = canvas.getContext('2d');
-    ctx.fillStyle = 'rgba(120,32,45,0.1)';
-    ctx.fillStyle = 'black';
+    ctx.fillStyle = 'white';
     ctx.arc(canvas.width / 2, canvas.height / 2,
             canvas.width / 2, 2 * Math.PI, false);
     ctx.fill();
