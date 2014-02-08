@@ -38,6 +38,10 @@
     html, body{
         background: black;
     }
+    p span {
+        -webkit-transition: all .3s;
+        transition: all .3s;
+    }
     canvas {
         background: url('res/skybox/up.jpg');
     }
@@ -48,5 +52,34 @@
         font-style: normal;
     }
 </style>
+
+<script>
+    setInterval(function(){
+        var ps = document.getElementsByTagName('p');
+        if(!ps){ return; }
+        var p = ps[0];
+        var letters = document.querySelectorAll('p span');
+        if(letters.length == 0) {
+            var text = p.innerHTML;
+            p.innerHTML = '';
+            for(var i=0;i<text.length;i++){
+                p.innerHTML += '<span>' + text.charAt(i) + '</span>';
+            }
+            letters = document.querySelectorAll('p span');
+        }
+
+        var step = 10;
+        for(var i=0;i<letters.length;i++){
+            setTimeout((function(i){ return function(){
+                letters[i].style.fontSize = '55pt';
+                letters[i].style.color = '#ff0';
+            }})(letters.length - i), i * step);
+            setTimeout((function(i){ return function(){
+                letters[i].style.fontSize = '50pt';
+                letters[i].style.color = '#fff';
+            }})(letters.length - i), (i + 10) * step);
+        }
+    }, 10000);
+</script>
 </body>
 </html>

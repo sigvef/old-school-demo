@@ -7,6 +7,8 @@ DumpsterScene.prototype.NAME = 'dumpster';
 
 DumpsterScene.prototype.init = function(done){
 
+    DumpsterScene.random = new Random();
+
     var geometry, material, cube;
     var dumpster;
 
@@ -32,6 +34,44 @@ DumpsterScene.prototype.init = function(done){
 
     cube = new THREE.Mesh(geometry, material);
     this.scene.add(cube);
+
+
+    var particleGeometry = new THREE.Geometry();
+
+    for ( i = 0; i < 20000; i ++ ) {
+        var vertex = new THREE.Vector3();
+        vertex.x = DumpsterScene.random() * 2000 - 1000;
+        vertex.y = DumpsterScene.random() * 3000;
+        vertex.z = DumpsterScene.random() * 2000 - 1000;
+        particleGeometry.vertices.push( vertex );
+    }
+
+    var particleParameters = [
+        [[1, 1, 0.5], 1],
+        [[0.95, 1, 0.5], 1.2],
+        [[0.90, 1, 0.5], 1.4],
+        [[0.85, 1, 0.5], 1.6],
+        [[0.80, 1, 0.5], 1.8]
+    ];
+
+    var particleMaterials = [];
+    this.particleSystems = [];
+
+    for ( i = 0; i < particleParameters.length; i ++ ) {
+        var color = particleParameters[i][0];
+        var size  = particleParameters[i][1];
+        particleMaterials[i] = new THREE.ParticleSystemMaterial({
+            size: size,
+            fog: true,
+            opacity: 0.5,
+            transparency: true
+        });
+        this.particleSystems[i] = new THREE.ParticleSystem(particleGeometry, particleMaterials[i]);
+        this.particleSystems[i].rotation.x = DumpsterScene.random() * 6;
+        this.particleSystems[i].rotation.y = DumpsterScene.random() * 6;
+        this.particleSystems[i].rotation.z = DumpsterScene.random() * 6;
+        this.scene.add(this.particleSystems[i]);
+    }
 
     light = new THREE.PointLight(0xffffff);
     light.position = new THREE.Vector3(500,1000,400);
@@ -136,6 +176,15 @@ DumpsterScene.prototype.update = function(){
         this.camera.position.z = 500;
         this.camera.lookAt(new THREE.Vector3(0,0,0));
     }
+    for ( i = 0; i < this.particleSystems.length; i ++ ) {
+        var ps = this.particleSystems[i];
+        ps.position.x = Math.sin(t/100) * 10;
+        ps.position.y = - t; 
+        ps.position.z = Math.cos(t/100) * 10;
+        ps.rotation.x = t / 8000; 
+        ps.rotation.y = t / 3402; 
+        ps.rotation.z = t / 4539; 
+    }
 }
 
 DumpsterScene.prototype.render = function() {
@@ -150,6 +199,7 @@ DumpsterScene.prototype.render = function() {
 }
 
 DumpsterScene.prototype.reset = function(){
+    DumpsterScene.random = new Random();
 }
 
 DumpsterScene.prototype.script = {
