@@ -10,6 +10,7 @@ GreetScene.prototype.init = function(done){
     this.canvas.width = 16 * GU;
     this.canvas.height = 9 * GU;
     Math.random = Random();
+    GreetScene.random = Random();
     this.ctx = this.canvas.getContext('2d');
     this.balls = new BallPool();
     this.infiniteCanvas = new InfiniteCanvas();
@@ -63,7 +64,7 @@ GreetScene.prototype.reset = function(){
     renderer.domElement.style.display = 'none';
     this.infiniteCanvas.drawImage(this.greetzImage, -10, 9);
     document.body.appendChild(this.canvas);
-    Math.random = Random(172344);
+    GreetScene.random = Random(172344);
 }
 GreetScene.prototype.pause = function(){
     document.body.removeChild(this.canvas);

@@ -43,7 +43,6 @@ DumpsterScene.prototype.init = function(done){
     this.cameraLight = new THREE.DirectionalLight(0xffffff);
     this.scene.add(this.cameraLight);
     this.scene.add(spotLight);
-    var ambient = new THREE.AmbientLight(0x444444);
 
     var urlPrefix = "res/skybox/";
     var map = [
@@ -63,9 +62,9 @@ DumpsterScene.prototype.init = function(done){
         });
     }
     var skyMaterial = new THREE.MeshFaceMaterial(materialArray);
-    var skyBox = new THREE.Mesh(skyGeometry, skyMaterial);
-    skyBox.position.y = 1500;
-    this.scene.add(skyBox);
+    this.skyBox = new THREE.Mesh(skyGeometry, skyMaterial);
+    this.skyBox.position.y = 1500;
+    this.scene.add(this.skyBox);
     this.scene.fog = new THREE.FogExp2(0x040411, 0.001);
 
     var loader = new THREE.JSONLoader();
@@ -80,6 +79,7 @@ DumpsterScene.prototype.init = function(done){
                 var mesh = new THREE.Mesh(geometry,
                     new THREE.MeshFaceMaterial(materials));
                 mesh.castShadow = true;
+                that.dumpsterMesh = mesh;
                 that.scene.add(mesh);
             });
 
@@ -91,6 +91,7 @@ DumpsterScene.prototype.init = function(done){
     ground.material.map.repeat.set(20, 20);
     ground.rotation.x = 3.141592 * 1.5;
     ground.position.y = 10;
+    this.ground = ground;
     this.scene.add(ground);
 
     var controls = new THREE.FlyControls(this.camera);
@@ -142,6 +143,8 @@ DumpsterScene.prototype.render = function() {
     renderer.clear();
     if(t < 1000){
         renderer.domElement.style.opacity = t / 1000;
+    } else {
+        renderer.domElement.style.opacity = 1;
     }
     this.composer.render();
     renderer.render(this.scene, this.camera);

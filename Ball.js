@@ -12,7 +12,7 @@ function Ball(){
 Ball.prototype.update = function(){
     this.x += this.speed * Math.sin(this.direction);
     this.y += this.speed * Math.cos(this.direction);
-    this.directiondt += this.speed * t / 500 * (Math.random() - 0.5);
+    this.directiondt += this.speed * t / 500 * (GreetScene.random() - 0.5);
     if(this.directiondt > this.speed * 2){
         this.directiondt = this.speed * 2;
     }
@@ -60,10 +60,10 @@ BallPool.prototype.addBall = function(x, y, direction){
     } else {
         var ball = this.balls[this.n++];
     }
-    ball.thickness = (0.5 * Math.random() + 0.5);
+    ball.thickness = (0.5 * GreetScene.random() + 0.5);
     ball.x = x;
     ball.y = y;
-    ball.direction = direction || Math.random() * 2 * 3.141592;
+    ball.direction = direction || GreetScene.random() * 2 * 3.141592;
 }
 
 BallPool.prototype.pop = function(i){
