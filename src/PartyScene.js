@@ -235,7 +235,7 @@ PartyScene.prototype.update = function(){
         renderer.domElement.style.display = 'none';
         var p = document.createElement('p');
         document.body.appendChild(p);
-        p.innerHTML = '"Old computers never die!"<br><br><br>by sigveseb';
+        p.innerHTML = '"Old Computers Never Die!" by sigveseb';
         p.style.font = '40pt cool';
         p.style.textAlign = 'center';
         p.style.marginTop = '300px';
