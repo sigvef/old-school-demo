@@ -68,8 +68,23 @@ function readytostart(){
     wb.setAttribute('class', 'p-wrapper');
     wb.setAttribute('id', 'startText');
     var b = document.createElement('p');
-    b.innerHTML = "Go to fullscreen, then press ENTER to start!";
-    b.setAttribute('style', 'z-index: 999');
+    b.innerHTML = '"Old Computers Never Die!"';
+    b.style.zIndex = 999;
+    b.style.textAlign = 'center';
+    b.style.fontSize = '50pt';
+    b.style.marginTop = '200px';
+    b.style.position = 'absolute';
+    b.style.width = '100%';
+    wb.appendChild(b);
+    var b = document.createElement('p');
+    b.innerHTML = 'Press Enter to start.';
+    b.style.zIndex = 999;
+    b.style.textAlign = 'center';
+    b.style.fontSize = '20pt';
+    b.style.color = '#666';
+    b.style.marginTop = '400px';
+    b.style.position = 'absolute';
+    b.style.width = '100%';
     wb.appendChild(b);
     document.body.appendChild(wb);
 }
@@ -84,8 +99,19 @@ function actuallystart(){
 function bootstrap(){
     document.addEventListener("keydown",function(e){
         if(e.keyCode == /*ENTER*/ 13) {
-        	document.body.removeChild(document.getElementById('startText'));
-            setTimeout(actuallystart, 100);
+            var steps = 100;
+            var step = 10;
+            var startText = document.getElementById('startText');
+            for(var i=0;i<steps;i++){
+                setTimeout((function(i){ return function(){
+                    console.log('settting to', 1 - (i / steps));
+                    startText.style.opacity = 1 - (i / steps);
+                };})(i), i * step);
+            }
+            setTimeout(function(){
+                document.body.removeChild(startText);
+                actuallystart();
+            }, steps * step);
         }
 
         if(e.keyCode == /*ESC*/ 27){
