@@ -59,19 +59,6 @@ PartyScene.prototype.init = function(done){
 
     var loader = new THREE.JSONLoader();
     var that = this;
-    loader.load("res/dumpster_scene.js",
-            function(geometry, materials) {
-                var dumpsterMaterial = materials[0];
-                dumpsterMaterial.normalMap = THREE.ImageUtils.loadTexture("res/Tex_0040_2.jpg"); 
-                dumpsterMaterial.bumpScale = 19;
-                dumpsterMaterial.shinyness = 25;
-                dumpsterMaterial.normalMap.wrapS = dumpsterMaterial.normalMap.wrapT = THREE.RepeatWrapping;
-                var mesh = new THREE.Mesh(geometry,
-                    new THREE.MeshFaceMaterial(materials));
-                mesh.castShadow = true;
-                that.dumpsterMesh = mesh;
-                that.scene.add(mesh);
-            });
 
     var ground = new THREE.Mesh(new THREE.CubeGeometry(3000, 3000, 1), new THREE.MeshLambertMaterial({
         map: THREE.ImageUtils.loadTexture('res/asphalt.jpg'),

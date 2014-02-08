@@ -1,7 +1,7 @@
 function ScreenScene(){ }
 
 ScreenScene.prototype.NAME = 'screen';
-ScreenScene.prototype.startTime = 1488;
+ScreenScene.prototype.startTime = 1482;
 
 ScreenScene.prototype.init = function(done){
 
@@ -171,7 +171,11 @@ ScreenScene.prototype.init = function(done){
     this.scrollerTexture.needsUpdate = true;
     this.scroller = new THREE.Mesh(
         new THREE.CubeGeometry(160 * 5, 40 * 5, 40 * 5),
-        new THREE.MeshBasicMaterial({ map: this.scrollerTexture })
+        new THREE.MeshBasicMaterial({
+            map: this.scrollerTexture,
+            transparent: true,
+            blending: THREE.AdditiveBlending
+        })
     );
     this.scroller.position.z = -200;
     this.scrollerTexture.flipY = true;
@@ -202,7 +206,7 @@ ScreenScene.prototype.update = function(){
 
 
     /* piano keyboarding */
-    var base = 2140;
+    var base = 2807;
     switch(t - base){
         case 10: this.piano[3].exited = this.piano[3].maxExited; break;
         case 20: this.piano[5].exited = this.piano[5].maxExited; break;
@@ -233,7 +237,7 @@ ScreenScene.prototype.update = function(){
         case 300: this.piano[10].exited = this.piano[10].maxExited; break;
         case 310: this.piano[5].exited = this.piano[5].maxExited; break;
     }
-    switch(t - base - 335){
+    switch(t - base - 330){
         case 10: this.piano[3].exited = this.piano[3].maxExited; break;
         case 20: this.piano[5].exited = this.piano[5].maxExited; break;
         case 30: this.piano[12].exited = this.piano[12].maxExited; break;
@@ -285,14 +289,11 @@ ScreenScene.prototype.update = function(){
 
     if(t == 2140){
         for(var i=0;i<this.polyhedrons.length;i++){
-            if(i == 2 || i == 3 || i == 5) continue;
             this.scene.remove(this.polyhedrons[i]);
             this.scene.remove(this.polyhedronWires[i]);
         }
         this.scene.remove(this.scroller);
-        for(var i=0;i<16;i++){
-            this.scene.add(this.piano[i]);
-        }
+        this.scene.add(this.plasmaCube);
     }
 
     for(var i=0;i<16;i++){
@@ -307,18 +308,12 @@ ScreenScene.prototype.update = function(){
         this.scroller.rotation.x = -0.15;
     }
     if(t == 2480) {
-        for(var i=0;i<this.polyhedrons.length;i++){
-            if(i == 2 || i == 3 || i == 5){
-                this.scene.remove(this.polyhedrons[i]);
-                this.scene.remove(this.polyhedronWires[i]);
-            }
-        }
     }
     if(t == 2807){
+        this.scene.remove(this.plasmaCube);
         for(var i=0;i<16;i++){
-            this.scene.remove(this.piano[i]);
+            this.scene.add(this.piano[i]);
         }
-        this.scene.add(this.plasmaCube);
     }
 
     this.plasmaCube.rotation.x = t / 201 * 4;
@@ -354,4 +349,6 @@ ScreenScene.prototype.render = function(){
     this.composer.render();
     renderer.render(this.scene, this.camera);
 };
-ScreenScene.prototype.reset = function(){};
+ScreenScene.prototype.reset = function(){
+    renderer.setClearColor(0x030303, 1);
+};

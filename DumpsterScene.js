@@ -10,7 +10,6 @@ DumpsterScene.prototype.init = function(done){
     var geometry, material, cube;
     var dumpster;
 
-
     this.scene = new THREE.Scene();
 
     this.camera = new THREE.ScriptedCamera(this.script, this.scene);
@@ -121,7 +120,7 @@ DumpsterScene.prototype.update = function(){
     this.cameraLight.lookAt(this.camera.target);
 
     if(t >= 1228) {
-       var amount = (t - 1228) / (1588 - 1288);
+       var amount = (t - 1228) / (1560 - 1288);
        this.camera.up.x = lerp(0, 0.70999757454156, amount);
        this.camera.up.y = lerp(1, 0.66357575026628, amount);
        this.camera.up.z = lerp(0, -0.235734316135022, amount);

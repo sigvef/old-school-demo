@@ -49,15 +49,24 @@ GreetScene.prototype.syncrender = function(){
     var x = -(this.leaderBall.x - 6);
     var y = -(this.leaderBall.y - 4.5);
     this.canvas.style.backgroundPosition = (x * GU / 2) + 'px ' + (y * GU / 2) + 'px';
+}
+
+GreetScene.prototype.render = function(){
+    var x = -(this.leaderBall.x - 6);
+    var y = -(this.leaderBall.y - 4.5);
     this.infiniteCanvas.render(this.ctx, x, y, this.scale);
+    if(t <= 4300){
+        var amount = Math.min(1, 1 - (t - 4130) / (4300 - 4130));
+        this.ctx.fillStyle = 'rgba(255, 255, 255,' + amount + ')';
+        this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
+
+    }
+
     if(t > 5129){
         var amount = (t - 5129) / (5369 - 5129);
         this.ctx.fillStyle = 'rgba(255, 255, 255,' + amount + ')';
         this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
     }
-}
-
-GreetScene.prototype.render = function(){
 }
 
 GreetScene.prototype.reset = function(){
